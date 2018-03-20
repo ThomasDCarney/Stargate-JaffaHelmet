@@ -34,13 +34,41 @@ encourage people to take apart and reuse old things as much as possible as I
 myself am learning how things are built and that's a great way to figure stuff
 out!
 
+## What We Change
+
+If you start with Honus's arduino sketch, changes happen at regular intervals.
+The program loop simply tells each servo to take a new position and then delays
+for set time intervals. Not bad if you're in a pinch or for testing purposes but
+we'd like our version to be interactive.
+
+For instance, we want to be able to follow a camera or onlooker and change moods
+on command. The following is an illustration and list of actions to be added.
+
+![Head Animation Illustration](images/references/MovementMoodDiagram.jpg)
+
+* Move Laterally: Turning the head left and right.
+    * Turn head to the left.
+    * Turn head to the right.
+* Pivot:
+    * Tilt head to the left.
+    * Tild head to the right.
+* Re-center the head.
+* Change moods:
+    * Passive (calm): Fins are lowered and eyes white.
+    * Active (attack): Fins are spread and eyes red.
+* Change modes: For specific heads.
+    * Eagle: Jerky, fast, bird like movements.
+    * Jackal: Smooth, more stealthy movements.
+
 ## Breakdown
 
-Below is a list of changes we've made so far, each links to the relevant
-documentation...
+Below is a list of each change, on it's own, both hardware and software. I try
+to break it down so you can look at or implement things in pieces but certain
+items do overlap...
 
-* [Remote Controlled Head Movements](RemoteControl.md)
-* [Remote Head Movement - Arduino Sketch - Coming Soon]()
-* [Mood Indication - Coming Soon]()
-* [Mood Indication - Arduino Sketch - Coming Soon]()
+* [Building the Remote](RemoteControl.md)
+* [Head Movement - Overview - Coming Soon]()
+* [Head Movement - Code - Coming Soon]()
+* [Mood Indication - Overview - Coming Soon]()
+* [Mood Indication - Code - Coming Soon]()
 * [Full Helmet Arduino Sketch - Coming Soon]()
