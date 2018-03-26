@@ -1,70 +1,67 @@
 # Stargate-JaffaHelmet
 
+## Overview
+
 This is a cosplay project my friends and I have been working on, a replica Jaffa
-uniform complete with animatronic helmet and staff weapon. Jaffa being from the
-1994 movie "Stargate", or if you're more familiar, the TV series "SG1" that
-came about some time later. But something that looks kinda like this...
+outfit, complete with animatronic helmet and staff weapon. Jaffa being from the
+1994 movie "Stargate", or if more familiar, the TV series "SG1" that came about
+some time later... Or more specific, one of these guys,
 
 ![Chibi Horus](images/references/ChibiHorus.jpg)
 
-Or if you're not a fan of silly doodles and questionable coloring skills, this
-is a reference image we've been working from...
+If you'd rather something more realistic however, this is a reference image
+we've been working from...
 
 ![Horus Reference](images/references/Reference-Horus.jpg)
 
+I try not to rely or dwell on the source material too much though as screen
+accuracy isn't the main focus (given skills, budget, time, etc) or even
+possible. So if you're following along with this, my goal is to keep things
+somewhat generic. Do the best with what you have available and make notes on
+what to change/do better next time.
+
 ### Note
 
-If you don't like my doodles, you're really not gonna like the rest of this
-write-up because I do lots of them... you have been warned!
-
-### Note
-
-Rather than starting from scratch, we based things on an Instructables titled
+Rather than starting from scratch, we based things on an Instructable titled
 [Animatronic Stargate Helmet](http://www.instructables.com/id/Animatronic-Stargate-helmet/)
-by the user Honus. We've made many tweaks though; for instance opting to build
+by the user Honus. We've made several tweaks, for instance opting to build
 it out of EVA Foam instead of paper craft. Mechanically however, everything is
-identical or works with Honus's tutorial. So for additional construction
-questions, please check out that instructable.
+identical or works with Honus's tutorial. So for specific construction details,
+please check that out.
 
-### Note
+## The Goal Here
 
-I'll be detailing our modifications here. I'll try to keep it fairly generic as
-the exact parts or form factors are less important than functionality. I
-encourage people to take apart and reuse old things as much as possible as I
-myself am learning how things are built and that's a great way to figure stuff
-out!
+If you start with Honus's Arduino sketch, movements happen at regular intervals.
+The program loops about, telling each servo to reposition and then delays for a
+set interval. Not bad in a pinch or for testing but we'd like some
+interactivity.
 
-## What We Change
-
-If you start with Honus's arduino sketch, changes happen at regular intervals.
-The program loop simply tells each servo to take a new position and then delays
-for set time intervals. Not bad if you're in a pinch or for testing purposes but
-we'd like our version to be interactive.
-
-For instance, we want to be able to follow a camera or onlooker and change moods
-on command. The following is an illustration and list of actions to be added.
+For instance, we want to be able to follow a camera, respond to the crowd or
+change moods on command. Here is a basic illustration and list of things we want
+to control.
 
 ![Head Animation Illustration](images/references/MovementMoodDiagram.jpg)
 
-* Move Laterally: Turning the head left and right.
+* Move Laterally:
     * Turn head to the left.
     * Turn head to the right.
 * Pivot:
     * Tilt head to the left.
     * Tild head to the right.
-* Re-center the head.
+* Reset/re-center the head.
 * Change moods:
     * Passive (calm): Fins are lowered and eyes white.
     * Active (attack): Fins are spread and eyes red.
-* Change modes: For specific heads.
-    * Eagle: Jerky, fast, bird like movements.
-    * Jackal: Smooth, more stealthy movements.
+* Change modes: For specific masks/heads.
+    * Eagle head: Jerky, fast, bird like movements.
+    * Jackal head: Smooth, more stealthy movements.
 
 ## Breakdown
 
-Below is a list of each change, on it's own, both hardware and software. I try
-to break it down so you can look at or implement things in pieces but certain
-items do overlap...
+The items that need work fall into two general categories, whether they apply to
+head movements or indicate mood. We also need to start by deciding on and
+building some way to control everything. There is a little overlap but I tried
+to break it up as best I could via the following documents...
 
 * [Building the Remote](RemoteControl.md)
 * [Head Movement - Overview - Coming Soon]()
