@@ -15,23 +15,23 @@ we've been working from...
 ![Horus Reference](images/references/Reference-Horus.jpg)
 
 I try not to rely or dwell on the source material too much though as screen
-accuracy isn't the main focus (given skills, budget, time, etc) or even
+accuracy isn't the main focus (given skills, budget, time, etc.) or even
 possible. So if you're following along with this, my goal is to keep things
 somewhat generic. Do the best with what you have available and make notes on
 what to change/do better next time.
 
 ### Note
 
-Rather than starting from scratch, we based things on an Instructable titled
+**Rather than starting from scratch, we based things on an Instructable titled
 [Animatronic Stargate Helmet](http://www.instructables.com/id/Animatronic-Stargate-helmet/)
 by the user Honus. We've made several tweaks, for instance opting to build
 it out of EVA Foam instead of paper craft. Mechanically however, everything is
-identical or works with Honus's tutorial. So for specific construction details,
-please check that out.
+identical or works with Honus' tutorial. So for specific construction details,
+please check that out.**
 
 ## The Goal Here
 
-If you start with Honus's Arduino sketch, movements happen at regular intervals.
+If you start with Honus' Arduino sketch, movements happen at regular intervals.
 The program loops about, telling each servo to reposition and then delays for a
 set interval. Not bad in a pinch or for testing but we'd like some
 interactivity.
@@ -47,7 +47,7 @@ to control.
     * Turn head to the right.
 * Pivot:
     * Tilt head to the left.
-    * Tild head to the right.
+    * Tilt head to the right.
 * Reset/re-center the head.
 * Change moods:
     * Passive (calm): Fins are lowered and eyes white.
@@ -64,7 +64,9 @@ building some way to control everything. There is a little overlap but I tried
 to break it up as best I could via the following documents...
 
 * [Building the Remote](RemoteControl.md)
-* [Head Movement - Overview - Coming Soon]()
+* [Mode/Mood Buttons - Overview](ModeMoodButtonOverview.md)
+* [Mode/Mood Button - Code - Coming Soon]()
+* [Head Movement - Overview](MovementOverview.md)
 * [Head Movement - Code - Coming Soon]()
 * [Mood Indication - Overview - Coming Soon]()
 * [Mood Indication - Code - Coming Soon]()
