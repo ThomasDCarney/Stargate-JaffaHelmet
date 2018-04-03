@@ -71,7 +71,7 @@ Servo headLeftServo;
  * I don't deal with the button setup to change mode here but you can 
  * manually change it for testing.
  */
-int currentMode = 1; // 0 = Jerky, 1 = Smooth
+int currentMode = 0; // 0 = Jerky, 1 = Smooth
 
 void setup() {
 
@@ -241,12 +241,20 @@ void turnRight(int zone) {
   // Handle right servo, only change if not already at the limit.
   if(angleR < R_HEAD_HOME + RISE_LIMIT) {
 
-    angleR = angleR + lateralMoveAmount[zone - 1];
-
-    // The increase could put it past the safe area.
-    if(angleR > R_HEAD_HOME + RISE_LIMIT) {
+    if(currentMode == 0) { // Jerky mode
 
       angleR = R_HEAD_HOME + RISE_LIMIT;
+      
+    } else { // Smooth mode
+
+      angleR = angleR + lateralMoveAmount[zone - 1];
+
+      // The increase could put it past the safe area.
+      if(angleR > R_HEAD_HOME + RISE_LIMIT) {
+
+        angleR = R_HEAD_HOME + RISE_LIMIT;
+      
+      }
       
     }
 
@@ -257,15 +265,23 @@ void turnRight(int zone) {
   // Handle left servo, only change if not already at the limit.
   if(angleL < L_HEAD_HOME + DIP_LIMIT) {
 
-    angleL = angleL + lateralMoveAmount[zone - 1];
-
-    // The increase could put it past the safe area.
-    if(angleL > L_HEAD_HOME + DIP_LIMIT) {
+    if(currentMode == 0) {
 
       angleL = L_HEAD_HOME + DIP_LIMIT;
       
+    } else {
+
+      angleL = angleL + lateralMoveAmount[zone - 1];
+
+      // The increase could put it past the safe area.
+      if(angleL > L_HEAD_HOME + DIP_LIMIT) {
+
+        angleL = L_HEAD_HOME + DIP_LIMIT;
+      
+      }
+      
     }
-    
+
     headLeftServo.write(angleL);
     
   }
@@ -293,12 +309,20 @@ void turnLeft(int zone) {
   // Handle right servo, only change if not already at the limit.
   if(angleR > R_HEAD_HOME - DIP_LIMIT) {
 
-    angleR = angleR - lateralMoveAmount[zone - 1];
-
-    // The decrease could put it past the safe area.
-    if(angleR < R_HEAD_HOME - DIP_LIMIT) {
+    if(currentMode == 0) { // Jerky Mode
 
       angleR = R_HEAD_HOME - DIP_LIMIT;
+      
+    } else { // Smooth Mode
+
+      angleR = angleR - lateralMoveAmount[zone - 1];
+
+      // The decrease could put it past the safe area.
+      if(angleR < R_HEAD_HOME - DIP_LIMIT) {
+
+        angleR = R_HEAD_HOME - DIP_LIMIT;
+      
+      }
       
     }
     
@@ -309,15 +333,23 @@ void turnLeft(int zone) {
   // Handle left servo, only change if not already at the limit.
   if(angleL > L_HEAD_HOME - RISE_LIMIT) {
 
-    angleL = angleL - lateralMoveAmount[zone - 1];
-
-    // The decrease could put it past the safe area.
-    if(angleL < L_HEAD_HOME - RISE_LIMIT) {
+    if(currentMode == 0) { // Jerky mode
 
       angleL = L_HEAD_HOME - RISE_LIMIT;
       
+    } else { // Smooth mode
+
+      angleL = angleL - lateralMoveAmount[zone - 1];
+
+      // The decrease could put it past the safe area.
+      if(angleL < L_HEAD_HOME - RISE_LIMIT) {
+
+        angleL = L_HEAD_HOME - RISE_LIMIT;
+      
+      }
+      
     }
-    
+
     headLeftServo.write(angleL);
     
   }
@@ -380,18 +412,26 @@ void tiltRight(int zone) {
   // Only change if not already at the limit.
   if(angleC < C_HEAD_HOME + TILT_LIMIT) {
 
-    angleC = angleC + tiltMoveAmount[zone - 1];
-
-    // The increase could put it past the safe area.
-    if(angleC > C_HEAD_HOME + TILT_LIMIT) {
+    if(currentMode == 0) { // Jerky mode
 
       angleC = C_HEAD_HOME + TILT_LIMIT;
       
-    }
-    
+    } else { // Smooth mode
+
+      angleC = angleC + tiltMoveAmount[zone - 1];
+
+      // The increase could put it past the safe area.
+      if(angleC > C_HEAD_HOME + TILT_LIMIT) {
+
+        angleC = C_HEAD_HOME + TILT_LIMIT;
+      
+      }// end third level IF block
+      
+    } // end second level IF-ELSE block
+
     headCenterServo.write(angleC);
     
-  }
+  } // end first level IF block
   
 } // end tiltRight
 
@@ -414,18 +454,26 @@ void tiltLeft(int zone) {
   // Only change if not already at the limit.
   if(angleC > C_HEAD_HOME - TILT_LIMIT) {
 
-    angleC = angleC - tiltMoveAmount[zone - 1];
-
-    // The decrease could put it past the safe area.
-    if(angleC < C_HEAD_HOME - TILT_LIMIT) {
+    if(currentMode == 0) { // Jerky mode
 
       angleC = C_HEAD_HOME - TILT_LIMIT;
       
-    }
-    
+    } else { // Smooth mode
+
+      angleC = angleC - tiltMoveAmount[zone - 1];
+
+      // The decrease could put it past the safe area.
+      if(angleC < C_HEAD_HOME - TILT_LIMIT) {
+
+        angleC = C_HEAD_HOME - TILT_LIMIT;
+      
+      } // end third level IF block
+      
+    } // end second level IF-ELSE block
+
     headCenterServo.write(angleC);
     
-  }
+  } // end first level IF block
   
 } // end tiltLeft
 
