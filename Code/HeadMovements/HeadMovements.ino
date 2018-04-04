@@ -12,13 +12,14 @@
  * 
  * Author: Thomas Carney
  * Date: 04/02/2018
+ * Last Update: 04/04/2018
  */
 
 // Include the header file for servo controls.
 #include <Servo.h>
 
 // Uncomment next line for debugging.
-#define DEBUGGING
+// #define DEBUGGING
 
 // Button 1 is attached to digial pin 4.
 const int BUTTON_1_PIN = 4;
@@ -27,7 +28,7 @@ const int BUTTON_1_PIN = 4;
 const int JOYSTICK_X_PIN = 0;
 const int JOYSTICK_Y_PIN = 1;
 
-// Specify pins used by servo input pins.
+// Specify pins used by each servo.
 const int C_HEAD_PIN = 6;
 const int R_HEAD_PIN = 7;
 const int L_HEAD_PIN = 8;
@@ -54,12 +55,28 @@ const int TILT_LIMIT = 60;
 const int RISE_LIMIT = 30;
 const int DIP_LIMIT = 30;
 
+/**
+ * I don't deal with the button setup to change mode here but they are 
+ * required and you can manually change it for testing.
+ */
+const int jerkyMode = 0;
+const int smoothMode = 1;
+int currentMode = jerkyMode;
+
+/*   numZones is really just a shortcut for determining each arrays length 
+ *   dynamically. For now however, keep in mind you will have to make other 
+ *   changes if you decide to alter the zone count in either direction.
+ */
 const int numZones = 10;
+
+// Masks for whether a zone is active/inactive... 0 = inactive, 1 = active.
 const int lateralJerkyZones[] = {1, 1, 1, 0, 0, 0, 0, 1, 1, 1}; // R to L
 const int lateralSmoothZones[] = {1, 1, 1, 1, 0, 0, 1, 1, 1, 1}; // R to L
+const int tiltJerkyZones[] = {1, 1, 0, 0, 0, 0, 0, 0, 1, 1}; // R to L (Up to Down on stick)
+const int tiltSmoothZones[] = {1, 1, 1, 0, 0, 0, 0, 1, 1, 1}; //R to L (Up to Down on stick)
+
+// Number of degrees servos will move in each zone (smooth mode only).
 const int lateralMoveAmount[] = {4, 3, 2, 1, 0, 0, 1, 2, 3, 4};
-const int tiltJerkyZones[] = {1, 1, 0, 0, 0, 0, 0, 0, 1, 1}; // Up to Down
-const int tiltSmoothZones[] = {1, 1, 1, 0, 0, 0, 0, 1, 1, 1}; // Up to Down
 const int tiltMoveAmount[] = {3, 2, 1, 0, 0, 0, 0, 1, 2, 3};
 
 // Create the servo objects which we'll manipulate.
@@ -67,11 +84,6 @@ Servo headCenterServo;
 Servo headRightServo;
 Servo headLeftServo;
 
-/**
- * I don't deal with the button setup to change mode here but you can 
- * manually change it for testing.
- */
-int currentMode = 0; // 0 = Jerky, 1 = Smooth
 
 void setup() {
 
@@ -86,7 +98,7 @@ void setup() {
   headRightServo.attach(R_HEAD_PIN);
   headLeftServo.attach(L_HEAD_PIN);
 
-  // Servos should initially be centered.
+  // Initially center the head.
   headCenterServo.write(C_HEAD_HOME);
   headRightServo.write(R_HEAD_HOME);
   headLeftServo.write(L_HEAD_HOME);
@@ -131,30 +143,36 @@ void loop() {
 
 
 /**
- * This function will take the value on an analog pin and  
- * convert it to an appropriate zone.
+ * This function takes the value (converted via A/D converter) present on an analog 
+ * pin and converts it to a its respective zone.
+ * 
+ * @param value - The A/D converted value on a pin.
  */
 int getZone(int value) {
 
   /*
    * Technically the analog to digital converter returns 0 to 1023 but 
-   * there is enough resistance in my circuit that the joystick doesn't 
-   * receive the full 5V. This means zone 10 never triggers so this is 
-   * adjusted to what I'm actually seeing.
+   * due to resistance along the circuit, the joystick issn't receiving  
+   * a full 5V. This means zones at the far ends never trigger. To 
+   * adjust, I'm reducing the max value closer to what I'm actually 
+   * seeing.
    */
-  return map(value, 0, 950, 1, 10);
+  return map(value, 0, 950, 1, numZones);
   
 } // end getZone
 
 
 /**
- * This function will take the zone for lateral movement and 
- * determine whether or not to move the head.
+ * This function takes a zone for lateral movement and determines whether or 
+ * not to turn the head. 
+ * 
+ * @param zone - The zone to check.
  */
 boolean isLateralMovementRequested(int zone) {
 
-  if((currentMode == 0 && lateralJerkyZones[zone - 1] == 1) ||
-     (currentMode == 1 && lateralSmoothZones[zone - 1] == 1)) {
+  // Arrays start at 0, zones start at 1 so shift by 1.
+  if((currentMode == jerkyMode && lateralJerkyZones[zone - 1] == 1) ||
+     (currentMode == smoothMode && lateralSmoothZones[zone - 1] == 1)) {
 
     return true;
     
@@ -166,13 +184,15 @@ boolean isLateralMovementRequested(int zone) {
 
 
 /**
- * This function will take the zone for head tilt and 
- * determine whether or not to tilt the head.
+ * This function will take the zone for head tilt and determine whether or 
+ * not to tilt the head.
+ * 
+ * @param zone - The zone to check.
  */
 boolean isTiltRequested(int zone) {
 
-  if((currentMode == 0 && tiltJerkyZones[zone - 1] == 1) ||
-     (currentMode == 1 && tiltSmoothZones[zone - 1] == 1)) {
+  if((currentMode == jerkyMode && tiltJerkyZones[zone - 1] == 1) ||
+     (currentMode == smoothMode && tiltSmoothZones[zone - 1] == 1)) {
 
     return true;
     
@@ -212,11 +232,11 @@ void updateLateralRotation(int zone) {
 
       turnLeft(zone);
       
-    } // end inner IF-ELSE block
+    }
 
     lastUpdateTime = millis();
     
-  } // end outer IF block
+  }
 
 } // end updateHorizontal
 
@@ -241,20 +261,13 @@ void turnRight(int zone) {
   // Handle right servo, only change if not already at the limit.
   if(angleR < R_HEAD_HOME + RISE_LIMIT) {
 
-    if(currentMode == 0) { // Jerky mode
+    if(currentMode == jerkyMode) {
 
       angleR = R_HEAD_HOME + RISE_LIMIT;
       
     } else { // Smooth mode
 
-      angleR = angleR + lateralMoveAmount[zone - 1];
-
-      // The increase could put it past the safe area.
-      if(angleR > R_HEAD_HOME + RISE_LIMIT) {
-
-        angleR = R_HEAD_HOME + RISE_LIMIT;
-      
-      }
+      angleR = min(angleR + lateralMoveAmount[zone - 1], R_HEAD_HOME + RISE_LIMIT);
       
     }
 
@@ -265,20 +278,13 @@ void turnRight(int zone) {
   // Handle left servo, only change if not already at the limit.
   if(angleL < L_HEAD_HOME + DIP_LIMIT) {
 
-    if(currentMode == 0) {
+    if(currentMode == jerkyMode) {
 
       angleL = L_HEAD_HOME + DIP_LIMIT;
       
-    } else {
+    } else { // Smooth Mode
 
-      angleL = angleL + lateralMoveAmount[zone - 1];
-
-      // The increase could put it past the safe area.
-      if(angleL > L_HEAD_HOME + DIP_LIMIT) {
-
-        angleL = L_HEAD_HOME + DIP_LIMIT;
-      
-      }
+      angleL = min(angleL + lateralMoveAmount[zone - 1], L_HEAD_HOME + DIP_LIMIT);
       
     }
 
@@ -309,20 +315,13 @@ void turnLeft(int zone) {
   // Handle right servo, only change if not already at the limit.
   if(angleR > R_HEAD_HOME - DIP_LIMIT) {
 
-    if(currentMode == 0) { // Jerky Mode
+    if(currentMode == jerkyMode) {
 
       angleR = R_HEAD_HOME - DIP_LIMIT;
       
     } else { // Smooth Mode
 
-      angleR = angleR - lateralMoveAmount[zone - 1];
-
-      // The decrease could put it past the safe area.
-      if(angleR < R_HEAD_HOME - DIP_LIMIT) {
-
-        angleR = R_HEAD_HOME - DIP_LIMIT;
-      
-      }
+      angleR = max(angleR - lateralMoveAmount[zone - 1], R_HEAD_HOME - DIP_LIMIT);
       
     }
     
@@ -333,20 +332,13 @@ void turnLeft(int zone) {
   // Handle left servo, only change if not already at the limit.
   if(angleL > L_HEAD_HOME - RISE_LIMIT) {
 
-    if(currentMode == 0) { // Jerky mode
+    if(currentMode == jerkyMode) {
 
       angleL = L_HEAD_HOME - RISE_LIMIT;
       
     } else { // Smooth mode
 
-      angleL = angleL - lateralMoveAmount[zone - 1];
-
-      // The decrease could put it past the safe area.
-      if(angleL < L_HEAD_HOME - RISE_LIMIT) {
-
-        angleL = L_HEAD_HOME - RISE_LIMIT;
-      
-      }
+      angleL = max(angleL - lateralMoveAmount[zone - 1], L_HEAD_HOME - RISE_LIMIT);
       
     }
 
@@ -368,15 +360,15 @@ void updateTilt(int zone) {
   // Used to log timing, don't change.
   static long lastUpdateTime = 0;
 
-  /*  The servos can make changes faster than needed or wanted. To smooth 
+  /*  Servos can make changes faster than needed or even wanted. To smooth 
    *  movements out and avoid innundating them with rapid requests, alter 
-   *  this value until movments feel natural or the way you like.
+   *  this value until movments feel natural or just the way you like.
    */
   int tiltDelayInterval = 25;
 
   if(hasEnoughTimePassed(tiltDelayInterval, lastUpdateTime)){
 
-    // Zone arrays move tilt R to L.
+    // Zone arrays for tilt move R to L.
     if(zone <= numZones / 2) {
 
       tiltRight(zone);
@@ -385,11 +377,11 @@ void updateTilt(int zone) {
 
       tiltLeft(zone);
       
-    } // end inner IF-ELSE block
+    }
 
     lastUpdateTime = millis();
         
-  } // end outer IF block
+  }
   
 } // end updateTilt
 
@@ -412,26 +404,19 @@ void tiltRight(int zone) {
   // Only change if not already at the limit.
   if(angleC < C_HEAD_HOME + TILT_LIMIT) {
 
-    if(currentMode == 0) { // Jerky mode
+    if(currentMode == jerkyMode) {
 
       angleC = C_HEAD_HOME + TILT_LIMIT;
       
     } else { // Smooth mode
 
-      angleC = angleC + tiltMoveAmount[zone - 1];
-
-      // The increase could put it past the safe area.
-      if(angleC > C_HEAD_HOME + TILT_LIMIT) {
-
-        angleC = C_HEAD_HOME + TILT_LIMIT;
+      angleC = min(angleC + tiltMoveAmount[zone - 1], C_HEAD_HOME + TILT_LIMIT);
       
-      }// end third level IF block
-      
-    } // end second level IF-ELSE block
+    }
 
     headCenterServo.write(angleC);
     
-  } // end first level IF block
+  }
   
 } // end tiltRight
 
@@ -454,26 +439,19 @@ void tiltLeft(int zone) {
   // Only change if not already at the limit.
   if(angleC > C_HEAD_HOME - TILT_LIMIT) {
 
-    if(currentMode == 0) { // Jerky mode
+    if(currentMode == jerkyMode) {
 
       angleC = C_HEAD_HOME - TILT_LIMIT;
       
     } else { // Smooth mode
 
-      angleC = angleC - tiltMoveAmount[zone - 1];
-
-      // The decrease could put it past the safe area.
-      if(angleC < C_HEAD_HOME - TILT_LIMIT) {
-
-        angleC = C_HEAD_HOME - TILT_LIMIT;
+      angleC = max(angleC - tiltMoveAmount[zone - 1], C_HEAD_HOME - TILT_LIMIT);
       
-      } // end third level IF block
-      
-    } // end second level IF-ELSE block
+    }
 
     headCenterServo.write(angleC);
     
-  } // end first level IF block
+  }
   
 } // end tiltLeft
 
@@ -492,12 +470,6 @@ void recenterHead() {
 
   if(hasEnoughTimePassed(buttonDelayInterval, lastUpdateTime)) {
 
-    #ifdef DEBUGGING
-  
-    Serial.println("Recentering Head");
-
-    #endif
-
     headCenterServo.write(C_HEAD_HOME);
     headRightServo.write(R_HEAD_HOME);
     headLeftServo.write(L_HEAD_HOME);
@@ -512,7 +484,7 @@ void recenterHead() {
  * A helper method used to delay or prevent repetative actions without wasting 
  * processor time. 
  * 
- * @param delayTime - The minimum time between identical actions.
+ * @param delayInterval - The minimum time between identical actions.
  * 
  * @param lastUpdateTime - The last time the specific action was taken.
  */

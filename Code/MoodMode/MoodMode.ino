@@ -56,6 +56,7 @@ void loop() {
  */
 void changeMood() {
 
+  // Simply toggling between 0 and 1.
   currentMood = (currentMood + 1) % 2;
 
   #ifdef DEBUGGING
@@ -83,6 +84,7 @@ void changeMood() {
  */
 void changeMode() {
 
+  // Simply toggling between 0 and 1.
   currentMode = (currentMode + 1) % 2;
 
   #ifdef DEBUGGING

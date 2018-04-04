@@ -65,9 +65,9 @@ to break it up as best I could via the following documents...
 
 * [Building the Remote](RemoteControl.md)
 * [Mode/Mood Buttons - Overview](ModeMoodButtonOverview.md)
-* [Mode/Mood Button - Code - Coming Soon]()
+* [Mode/Mood Button - Code](Code/MoodMode/MoodMode.ino)
 * [Head Movement - Overview](MovementOverview.md)
-* [Head Movement - Code - Coming Soon]()
+* [Head Movement - Code](Code/HeadMovements/HeadMovements.ino)
 * [Mood Indication - Overview - Coming Soon]()
 * [Mood Indication - Code - Coming Soon]()
 * [Full Helmet Arduino Sketch - Coming Soon]()
