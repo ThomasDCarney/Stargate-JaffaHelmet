@@ -70,4 +70,4 @@ to break it up as best I could via the following documents...
 * [Head Movement - Code](Code/HeadMovements/HeadMovements.ino)
 * [Mood Indication - Overview - Coming Soon]()
 * [Mood Indication - Code](Code/Moods/Moods.ino)
-* [Full Helmet Arduino Sketch - Coming Soon]()
+* [Full Helmet Arduino Sketch](Code/FullHelmet/FullHelmet.ino)
